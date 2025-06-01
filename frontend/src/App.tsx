@@ -32,6 +32,8 @@ export default function App() {
             }
             // Actually retrieve the job listings (text search or all)
             const res = fetch(`${apiBase}/api/jobs?q=${encodeURIComponent(q)}`);
+            fetch(`${apiBase}/api/keywords`);
+            fetch(`${apiBase}/api/resume/upload`, { method: "POST", body: formData });
             const data: Job[] = await res.json();
             setJobs(data);
         } catch (err) {
