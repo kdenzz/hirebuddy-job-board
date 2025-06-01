@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import SearchBar from "./components/SearchBar";
 import ResumeUpload from "./components/ResumeUpload";
 import JobCard from "./components/JobCard";
+// Then:
+
 
 type Job = {
     job_title: string;
@@ -18,6 +20,8 @@ export default function App() {
     const [jobs, setJobs] = useState<Job[]>([]);
     const [query, setQuery] = useState<string>("");
     const [trending, setTrending] = useState<string[]>([]);
+    const apiBase = import.meta.env.VITE_API_BASE_URL || "";
+
 
     // ─── FETCH JOBS ───────────────────────────────────────────────────────────────
     const fetchJobs = async (q = "") => {
@@ -27,7 +31,7 @@ export default function App() {
                 await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/jobs?q=${encodeURIComponent(q)}`);
             }
             // Actually retrieve the job listings (text search or all)
-            const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/jobs?q=${encodeURIComponent(q)}`);
+            const res = fetch(`${apiBase}/api/jobs?q=${encodeURIComponent(q)}`);
             const data: Job[] = await res.json();
             setJobs(data);
         } catch (err) {
