@@ -18,27 +18,31 @@ async function seedJobs() {
 
     const jobs = [];
 
-    for await (const line of rl) {
-        try {
-            const job = JSON.parse(line);
+    await (async () => {
+        for await (const line of rl) {
+            try {
+                const job = JSON.parse(line);
 
-            // Fix: Add default description if missing
-            if (!job.description) {
-                console.warn("Missing description in job:", job.job_title || "Untitled Job");
-                job.description = "No description provided";
+                // Validate required fields
+                const requiredFields = ['job_title', 'company_name', 'job_location', 'apply_link', 'description', 'source'];
+                const isValid = requiredFields.every(field => job[field]);
+
+                if (isValid) {
+                    jobs.push(job);
+                } else {
+                    console.warn("Skipping incomplete job:", job);
+                }
+            } catch (e) {
+                console.error("Invalid JSON line:", line);
             }
-
-            jobs.push(job);
-        } catch (e) {
-            console.error("Invalid JSON line:", line);
         }
-    }
+    })();
 
     try {
         await Job.insertMany(jobs);
         console.log(`${jobs.length} jobs inserted!`);
-    } catch (insertErr) {
-        console.error("Error inserting jobs:", insertErr);
+    } catch (err) {
+        console.error("Error inserting jobs:", err);
     } finally {
         mongoose.disconnect();
     }
