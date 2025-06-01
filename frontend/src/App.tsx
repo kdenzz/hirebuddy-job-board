@@ -1,4 +1,5 @@
-﻿import { useState, useEffect } from "react";
+﻿// src/App.tsx
+import { useState, useEffect } from "react";
 import SearchBar from "./components/SearchBar";
 import ResumeUpload from "./components/ResumeUpload";
 import JobCard from "./components/JobCard";
@@ -20,17 +21,14 @@ export default function App() {
 
     // ─── FETCH JOBS ───────────────────────────────────────────────────────────────
     const fetchJobs = async (q = "") => {
-        console.log("🔍 Fetching jobs from:", `/api/jobs?q=${encodeURIComponent(q)}`);
-
+        console.log("🔍 Fetching jobs from:", `https://hirebuddy-job-board.onrender.com/api/jobs?q=${encodeURIComponent(q)}`);
         try {
             // If the user typed something (q), the backend increments that keyword's count
             if (q.trim()) {
-                 await fetch(`https://hirebuddy-job-board.onrender.com/api/jobs?q=${encodeURIComponent(q)}`);
+                await fetch(`https://hirebuddy-job-board.onrender.com/api/jobs?q=${encodeURIComponent(q)}`);
             }
             // Actually retrieve the job listings (text search or all)
             const res = await fetch(`https://hirebuddy-job-board.onrender.com/api/jobs?q=${encodeURIComponent(q)}`);
-            if (!res.ok) throw new Error(`Backend error ${res.status}`);
-
             const data: Job[] = await res.json();
             setJobs(data);
         } catch (err) {
@@ -44,7 +42,7 @@ export default function App() {
         fetchJobs(); // Load unfiltered job list
 
         // Load top‐10 keywords (terms only)
-        fetch("/api/keywords")
+        fetch("https://hirebuddy-job-board.onrender.com/api/keywords")
             .then((res) => {
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 return res.json();
@@ -53,7 +51,7 @@ export default function App() {
                 setTrending(data.map((k) => k.term));
             })
             .catch((err) => {
-                console.error("❌ Failed to load trending keywords:", err);
+                console.error("Failed to load trending keywords:", err);
                 setTrending([]);
             });
     }, []);
