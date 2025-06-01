@@ -19,18 +19,28 @@ router.post('/upload', upload.single('resume'), async (req, res) => {
     // 2) Predict roles
     const predictedRoles = extractKeywords(content);  // e.g. ["engineer","manager"]
 
-    // 3) For each role, do a text‐search on Job, collect top 20
     const jobLists = await Promise.all(
-        predictedRoles.map(role =>
-            Job.find(
+        predictedRoles.map(async (role) => {
+            const regexMatches = await Job.find({
+                $or: [
+                    { job_title: { $regex: role, $options: "i" } },
+                    { description: { $regex: role, $options: "i" } }
+                ]
+            }).limit(20);
+
+            if (regexMatches.length > 0) return regexMatches;
+
+            // fallback to $text search
+            return await Job.find(
                 { $text: { $search: role } },
                 { score: { $meta: 'textScore' } }
             )
                 .sort({ score: { $meta: 'textScore' } })
                 .limit(20)
-                .exec()
-        )
+                .exec();
+        })
     );
+
 
     // 4) Flatten & dedupe by _id
     const allJobs = jobLists.flat();
