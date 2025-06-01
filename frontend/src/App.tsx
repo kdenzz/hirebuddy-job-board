@@ -87,7 +87,7 @@ export default function App() {
                             fetchJobs("");
                         }}
                     >
-                        JobBoard Pro
+                        HireBuddy
                     </span>
 
                     {/* Nav Links */}
@@ -140,6 +140,8 @@ export default function App() {
                 {/* ─── SEARCH BAR ────────────────────────────────────────────────────────── */}
                 <div className="flex justify-center">
                     <SearchBar
+                        value={query}
+                        setValue={setQuery}
                         onSearch={(q: string) => {
                             setQuery(q);
                             fetchJobs(q);
