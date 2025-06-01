@@ -14,10 +14,13 @@ const jobSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-// your text index for fast searches
-jobSchema.index(
-    { job_title: 'text', description: 'text' },
-    { weights: { job_title: 5, description: 1 }, name: 'TextIndex' }
-);
+JobSchema.index({
+    job_title: "text",
+    company_name: "text",
+    job_location: "text",
+    description: "text"
+});
+await Job.syncIndexes();
+
 
 module.exports = mongoose.model('Job', jobSchema);

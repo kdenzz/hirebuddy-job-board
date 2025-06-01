@@ -23,10 +23,11 @@ router.get("/", async (req, res) => {
         // 2️⃣ Fetch jobs (all or by text search)
         const jobs = !q
             ? await Job.find().limit(50)
-            : await Job
-                .find({ $text: { $search: q } }, { score: { $meta: "textScore" } })
+            : await Job.find({ $text: { $search: q } }, { score: { $meta: "textScore" } })
                 .sort({ score: { $meta: "textScore" } })
                 .limit(50);
+
+        console.log("Fetched jobs:", jobs); // Add this line
 
         res.json(jobs);
     } catch (err) {
