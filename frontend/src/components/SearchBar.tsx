@@ -1,5 +1,5 @@
 // frontend/src/components/SearchBar.tsx
-import React, { useState } from "react";
+import { useState } from "react";
 
 interface SearchBarProps {
     onSearch: (q: string) => void;

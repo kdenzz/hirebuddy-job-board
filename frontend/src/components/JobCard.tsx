@@ -1,6 +1,3 @@
-// src/components/JobCard.tsx
-import React from "react";
-
 export type Job = {
     job_title: string;
     company_name: string;

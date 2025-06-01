@@ -1,10 +1,7 @@
-﻿// src/App.tsx
-import React, { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import SearchBar from "./components/SearchBar";
 import ResumeUpload from "./components/ResumeUpload";
 import JobCard from "./components/JobCard";
-// Then:
-
 
 type Job = {
     job_title: string;
@@ -20,20 +17,16 @@ export default function App() {
     const [jobs, setJobs] = useState<Job[]>([]);
     const [query, setQuery] = useState<string>("");
     const [trending, setTrending] = useState<string[]>([]);
-    const apiBase = import.meta.env.VITE_API_BASE_URL || "";
-
 
     // ─── FETCH JOBS ───────────────────────────────────────────────────────────────
     const fetchJobs = async (q = "") => {
         try {
             // If the user typed something (q), the backend increments that keyword's count
             if (q.trim()) {
-                await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/jobs?q=${encodeURIComponent(q)}`);
+                await fetch(`/api/jobs?q=${encodeURIComponent(q)}`);
             }
             // Actually retrieve the job listings (text search or all)
-            const res = fetch(`${apiBase}/api/jobs?q=${encodeURIComponent(q)}`);
-            fetch(`${apiBase}/api/keywords`);
-            fetch(`${apiBase}/api/resume/upload`, { method: "POST", body: formData });
+            const res = await fetch(`/api/jobs?q=${encodeURIComponent(q)}`);
             const data: Job[] = await res.json();
             setJobs(data);
         } catch (err) {
@@ -99,8 +92,8 @@ export default function App() {
                     <nav className="space-x-6">
                         <button
                             className={`${!query
-                                    ? "font-semibold text-gray-900"
-                                    : "text-gray-600 hover:text-gray-900"
+                                ? "font-semibold text-gray-900"
+                                : "text-gray-600 hover:text-gray-900"
                                 }`}
                             onClick={() => {
                                 setQuery("");
@@ -160,8 +153,8 @@ export default function App() {
                                 key={term}
                                 onClick={() => handleFilterClick(term)}
                                 className={`px-4 py-2 rounded-full font-medium ${term === query
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-100"
+                                    ? "bg-blue-600 text-white"
+                                    : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-100"
                                     }`}
                             >
                                 {term}
