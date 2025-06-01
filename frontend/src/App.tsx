@@ -24,10 +24,10 @@ export default function App() {
         try {
             // If the user typed something (q), the backend increments that keyword's count
             if (q.trim()) {
-                await fetch(`/api/jobs?q=${encodeURIComponent(q)}`);
+                await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/jobs?q=${encodeURIComponent(q)}`);
             }
             // Actually retrieve the job listings (text search or all)
-            const res = await fetch(`/api/jobs?q=${encodeURIComponent(q)}`);
+            const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/jobs?q=${encodeURIComponent(q)}`);
             const data: Job[] = await res.json();
             setJobs(data);
         } catch (err) {

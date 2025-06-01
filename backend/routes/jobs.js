@@ -9,7 +9,6 @@ router.get("/", async (req, res) => {
     const q = (req.query.q || "").trim().toLowerCase();
 
     try {
-        // 1️⃣ Track the search term
         if (q) {
             await Keyword.findOneAndUpdate(
                 { term: q },

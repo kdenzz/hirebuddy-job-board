@@ -1,46 +1,38 @@
-﻿const fs = require('fs');
+﻿const mongoose = require('mongoose');
+const fs = require('fs');
 const readline = require('readline');
-const mongoose = require('mongoose');
+const Job = require('./models/Job');
 require('dotenv').config();
 
-const Job = require('./models/Job');
-
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('✅ Connected to MongoDB'))
-    .catch(err => {
-        console.error('❌ Failed to connect to MongoDB', err);
-        process.exit(1);
-    });
 async function seedJobs() {
-    const fileStream = fs.createReadStream('jobs.jsonl');
+    await mongoose.connect(process.env.MONGODB_URI);
+    console.log("Connected to DB");
+
+    await Job.deleteMany({});
+    console.log("Old jobs cleared");
+
     const rl = readline.createInterface({
-        input: fileStream,
+        input: fs.createReadStream('jobs.jsonl'),
         crlfDelay: Infinity
     });
 
+    const jobs = [];
+
     for await (const line of rl) {
         try {
-            const jobData = JSON.parse(line);
-            const job = new Job(jobData);
-            await job.save();
-        } catch (err) {
-            console.error("Error parsing or saving job:", err.message);
+            const job = JSON.parse(line);
+            jobs.push(job);
+        } catch (e) {
+            console.error("Invalid JSON line:", line);
         }
     }
 
-    console.log('✅ Done seeding jobs!');
-    process.exit();
+    await Job.insertMany(jobs);
+    console.log(`${jobs.length} jobs inserted!`);
+    mongoose.disconnect();
 }
 
-seedJobs();
-
-const sanitize = (s) => s.replace(/\uFFFD/g, "").trim();
-
-for await (const line of rl) {
-    let jobData = JSON.parse(line);
-    jobData.job_title = sanitize(jobData.job_title);
-    jobData.company_name = sanitize(jobData.company_name);
-    jobData.job_location = sanitize(jobData.job_location);
-    jobData.description = sanitize(jobData.description);
-    await new Job(jobData).save();
-}
+seedJobs().catch(err => {
+    console.error("Error seeding:", err);
+    mongoose.disconnect();
+});
