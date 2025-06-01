@@ -2,7 +2,7 @@
     "rewrites": [
         {
             "source": "/api/:path*",
-            "destination": "https://https://hirebuddy-job-board.onrender.com/api/:path*"
+            "destination": "https://hirebuddy-job-board.onrender.com/api/:path*"
         }
     ]
 }
