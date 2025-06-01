@@ -20,7 +20,6 @@ JobSchema.index({
     job_location: "text",
     description: "text"
 });
-await Job.syncIndexes();
 
 
 module.exports = mongoose.model('Job', jobSchema);
