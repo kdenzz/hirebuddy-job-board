@@ -14,7 +14,7 @@ const jobSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-JobSchema.index({
+jobSchema.index({
     job_title: "text",
     company_name: "text",
     job_location: "text",
